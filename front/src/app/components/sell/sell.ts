@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { ToastService } from '../../services/toast.service';
 import Swal from 'sweetalert2';
-import { LucideAngularModule, Camera, X, AlertCircle, CheckCircle, User, LogIn, Home, LogOut, Menu, Palette, LayoutDashboard, Package, Plus, Edit, Trash2, Calendar, Eye, Save, Image } from 'lucide-angular';
+import { LucideAngularModule, Camera, X, AlertCircle, CheckCircle, User, LogIn, Home, LogOut, Menu, Palette, LayoutDashboard, Package, Plus, Edit, Trash2, Calendar, Eye, Save, Image, Type, FileText, RotateCcw, Clock, Settings, Lock } from 'lucide-angular';
 import { z } from 'zod';
 import { Product, ProductStatus } from '../../models/product.model';
 
@@ -52,7 +52,7 @@ const productSchema = z.object({
 
 @Component({
   selector: 'app-sell',
-  imports: [CommonModule, FormsModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './sell.html',
   styleUrls: ['./sell.css'],
 })
@@ -84,6 +84,12 @@ export class SellComponent implements OnInit, OnDestroy {
   readonly Eye = Eye;
   readonly Save = Save;
   readonly Image = Image;
+  readonly Type = Type;
+  readonly FileText = FileText;
+  readonly RotateCcw = RotateCcw;
+  readonly Clock = Clock;
+  readonly Settings = Settings;
+  readonly Lock = Lock;
 
   isAuthenticated = signal<boolean>(false);
   currentUser = signal<any>(null);
@@ -217,6 +223,11 @@ export class SellComponent implements OnInit, OnDestroy {
     return this.getProductsByStatus(filter);
   }
 
+  // trackBy function for ngFor to improve rendering performance
+  trackByProductId(_: number, product: Product): string | number {
+    return product.id ?? _;
+  }
+
   viewProductDetails(product: Product): void {
     this.selectedProduct.set(product);
     this.showProductModal.set(true);
@@ -240,7 +251,7 @@ export class SellComponent implements OnInit, OnDestroy {
     this.toastService.success('Profil mis à jour avec succès');
   }
 
-  editProduct(product: Product): void {
+  editProduct(): void {
     // Ici on pourrait implémenter l'édition d'un produit
     this.toastService.info('Fonctionnalité d\'édition à venir');
   }

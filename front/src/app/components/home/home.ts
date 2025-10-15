@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Product } from '../../models/product.model';
-import { LucideAngularModule, Camera, Search, Eye, Star, Plus, X, Phone, Mail, User, Menu, Palette } from 'lucide-angular';
+import { LucideAngularModule, Camera, Search, Eye, Star, Plus, X, Phone, Mail, User, Menu, Palette, Shield, Package, Users, RotateCcw } from 'lucide-angular';
 import { NoDownloadDirective } from '../../directives/no-download.directive';
 import { ThemeSelectorComponent } from '../theme-selector/theme-selector';
 
@@ -17,7 +17,7 @@ import { ThemeSelectorComponent } from '../theme-selector/theme-selector';
 export class HomeComponent implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private apiService = inject(ApiService);
-  
+
   readonly Camera = Camera;
   readonly Search = Search;
   readonly Eye = Eye;
@@ -29,7 +29,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
   readonly User = User;
   readonly Menu = Menu;
   readonly Palette = Palette;
-  
+  readonly Shield = Shield;
+  readonly Package = Package;
+  readonly Users = Users;
+  readonly RotateCcw = RotateCcw;
+
   products = signal<Product[]>([]);
   loading = signal<boolean>(false);
   searchTerm = signal<string>('');
@@ -52,7 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadProducts(): void {
     this.loading.set(true);
-    
+
     this.apiService.getProducts({
       status: 'APPROVED',
       search: this.searchTerm(),
@@ -107,5 +111,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       console.error('Theme selector not found');
     }
+  }
+
+  resetSearch(): void {
+    this.searchTerm.set('');
+    this.currentPage.set(1);
+    this.loadProducts();
   }
 }

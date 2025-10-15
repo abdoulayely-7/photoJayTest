@@ -4,7 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { LucideAngularModule, ArrowRight, Shield, AlertCircle, Lock, Eye, EyeOff, ArrowLeft, Mail, Camera } from 'lucide-angular';
+import { LucideAngularModule, ArrowRight, Shield, AlertCircle, Lock, Eye, EyeOff, ArrowLeft, Mail, Camera, User } from 'lucide-angular';
 import { loginSchema } from '../../schemas/login.schema';
 
 @Component({
@@ -23,10 +23,12 @@ export class LoginComponent {
   readonly ArrowLeft = ArrowLeft;
   readonly Mail = Mail;
   readonly Camera = Camera;
+  readonly User = User;
 
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  selectedRole = signal<string>('seller');
   email = signal<string>('');
   password = signal<string>('');
   showPassword = signal<boolean>(false);
@@ -63,19 +65,13 @@ export class LoginComponent {
     this.loading.set(true);
 
     try {
-      // Essaie d'abord la connexion vendeur
-      try {
+      // Connexion selon le rôle sélectionné
+      if (this.selectedRole() === 'seller') {
         await this.authService.sellerLogin(this.email(), this.password());
-      } catch (sellerError) {
-        // Si la connexion vendeur échoue, essaie la connexion normale (admin/modérateur)
-        await this.authService.login(this.email(), this.password());
-      }
-
-      // Rediriger vers la page appropriée selon le rôle
-      if (this.authService.isAdmin()) {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/sell']);
       } else {
-        this.router.navigate(['/']);
+        await this.authService.login(this.email(), this.password());
+        this.router.navigate(['/admin']);
       }
     } catch (error: unknown) {
       const errorMessage = this.getErrorMessage(error);

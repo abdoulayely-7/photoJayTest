@@ -5,8 +5,8 @@
         <div class="login-icon">
           <lucide-icon [img]="Shield" [size]="32"></lucide-icon>
         </div>
-        <h1>Connexion Administrateur</h1>
-        <p>Accédez au tableau de bord de modération</p>
+        <h1>Connexion</h1>
+        <p>Accédez à votre espace personnel</p>
       </div>
 
       @if (error()) {
@@ -17,6 +17,24 @@
       }
 
       <form (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label class="form-label" for="role-select">
+            <lucide-icon [img]="User" [size]="16" class="label-icon"></lucide-icon>
+            Type de compte
+          </label>
+          <select
+            id="role-select"
+            [value]="selectedRole()"
+            (change)="selectedRole.set($any($event.target).value)"
+            name="role"
+            class="form-input"
+            [disabled]="loading()"
+          >
+            <option value="seller">Vendeur</option>
+            <option value="admin">Administrateur</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label class="form-label" for="email-input">
             <lucide-icon [img]="Mail" [size]="16" class="label-icon"></lucide-icon>
@@ -30,7 +48,7 @@
             name="email"
             class="form-input"
             [class.error]="hasFieldError('email')"
-            placeholder="admin@fotoljay.com"
+            placeholder="votre@email.com"
             required
             autocomplete="email"
             [disabled]="loading()"

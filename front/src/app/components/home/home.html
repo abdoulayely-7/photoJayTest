@@ -1,174 +1,229 @@
-<!-- Navigation -->
-<nav class="navbar">
-  <div class="navbar-left">
-    <a class="navbar-brand" href=" ">
-      <img src="/assets/images/logo.png" alt="Fotoljay Logo" class="brand-logo" />
-      <span class="brand-name">Fotoljay</span>
-    </a>
-  </div>
-
-  <div class="navbar-right">
-    <app-theme-selector #themeSelector></app-theme-selector>
-    <a routerLink="/seller-auth" class="navbar-link">Espace Vendeur</a>
-    <a routerLink="/sell" class="btn btn-primary">
-      <lucide-icon [img]="Plus" [size]="18"></lucide-icon>
-      Vendre un produit
-    </a>
-    <a routerLink="/login" class="navbar-link">Connexion Admin</a>
-  </div>
-
-  <!-- Mobile Menu Button -->
-  <button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="Menu">
-    <lucide-icon [img]="Menu" [size]="24"></lucide-icon>
-  </button>
-</nav>
-
-<!-- Mobile Menu Overlay -->
-@if (mobileMenuOpen()) {
-<div class="mobile-menu-overlay" (click)="closeMobileMenu()">
-  <div class="mobile-menu" (click)="$event.stopPropagation()">
-    <div class="mobile-menu-header">
-      <span class="mobile-menu-title">Menu</span>
-      <button class="mobile-menu-close" (click)="closeMobileMenu()" aria-label="Fermer">
-        <lucide-icon [img]="X" [size]="24"></lucide-icon>
-      </button>
+<!-- Header -->
+<header class="header">
+  <div class="header-content">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="Fotoljay Logo" class="logo" />
+      <h1 class="site-title">Fotoljay</h1>
     </div>
-    <div class="mobile-menu-content">
-      <div
-        class="mobile-menu-item"
-        (click)="openThemeSelector()"
-        role="button"
-        tabindex="0"
-        aria-label="Changer le thème"
-        style="cursor: pointer"
-      >
-        <lucide-icon [img]="Palette" [size]="20"></lucide-icon>
-        <span>Changer le thème</span>
-      </div>
-      <a routerLink="/seller-auth" class="mobile-menu-item" (click)="closeMobileMenu()">
-        <lucide-icon [img]="User" [size]="20"></lucide-icon>
-        <span>Espace Vendeur</span>
+
+    <nav class="main-nav">
+      <a routerLink="/seller-auth" class="nav-link">
+        <lucide-icon [img]="User" [size]="16"></lucide-icon>
+        Espace Vendeur
       </a>
-      <a routerLink="/sell" class="mobile-menu-item" (click)="closeMobileMenu()">
-        <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+      <a routerLink="/sell" class="cta-btn">
+        <lucide-icon [img]="Plus" [size]="16"></lucide-icon>
         <span>Vendre un produit</span>
       </a>
-      <a routerLink="/login" class="mobile-menu-item" (click)="closeMobileMenu()">
-        <span>Connexion Admin</span>
+      <a routerLink="/login" class="nav-link">
+        <lucide-icon [img]="Shield" [size]="16"></lucide-icon>
+        Administration
       </a>
-    </div>
+      <app-theme-selector #themeSelector></app-theme-selector>
+    </nav>
+
+    <button class="mobile-toggle" (click)="toggleMobileMenu()" aria-label="Menu">
+      <lucide-icon [img]="Menu" [size]="24"></lucide-icon>
+    </button>
   </div>
-</div>
-}
+
+  @if (mobileMenuOpen()) {
+    <div class="mobile-menu">
+      <div class="mobile-menu-content">
+        <a routerLink="/seller-auth" class="mobile-menu-link" (click)="closeMobileMenu()">
+          <lucide-icon [img]="User" [size]="20"></lucide-icon>
+          Espace Vendeur
+        </a>
+        <a routerLink="/sell" class="mobile-cta-btn" (click)="closeMobileMenu()">
+          <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+          Vendre un produit
+        </a>
+        <a routerLink="/login" class="mobile-menu-link" (click)="closeMobileMenu()">
+          <lucide-icon [img]="Shield" [size]="20"></lucide-icon>
+          Administration
+        </a>
+        <div class="mobile-theme-selector" (click)="openThemeSelector(); closeMobileMenu()">
+          <lucide-icon [img]="Palette" [size]="20"></lucide-icon>
+          Changer le thème
+        </div>
+      </div>
+    </div>
+  }
+</header>
 
 <!-- Hero Section -->
-<div class="container">
-  <div class="text-center mt-4 mb-4">
-    <h1 class="hero-title">Trouvez des produits d'occasion de qualité</h1>
-    <p class="hero-subtitle">Tous les produits sont vérifiés avec photos authentiques</p>
-  </div>
-
-  <!-- Barre de recherche -->
-  <div class="card mb-4">
-    <form (ngSubmit)="onSearch()" class="search-form">
-      <input
-        type="text"
-        [value]="searchTerm()"
-        (input)="searchTerm.set($any($event.target).value)"
-        name="search"
-        class="form-input"
-        placeholder="Rechercher un produit..."
-      />
-      <button type="submit" class="btn btn-primary">
-        <lucide-icon [img]="Search" [size]="18"></lucide-icon>
-        Rechercher
-      </button>
-    </form>
-  </div>
-
-  <!-- Loading -->
-  @if (loading()) {
-  <div class="loading">
-    <div class="spinner"></div>
-    <p class="mt-2">Chargement des produits...</p>
-  </div>
-  }
-
-  <!-- Liste des produits -->
-  @else { @if (products().length === 0) {
-  <div class="text-center mt-4">
-    <p class="empty-message">Aucun produit trouvé</p>
-  </div>
-  } @else {
-  <div class="products-grid">
-    @for (product of products(); track product.id) {
-    <div class="product-card">
-      <img
-        [src]="getPrimaryPhoto(product)"
-        [alt]="product.title"
-        [title]="product.title"
-        class="product-image"
-        appNoDownload
-        (click)="viewProduct(product, $event)"
-        (error)="$any($event.target).src = '/placeholder.svg'"
-      />
-      <div class="product-body">
-        @if (product.isVip) {
-        <span class="badge badge-vip">
-          <lucide-icon [img]="Star" [size]="16"></lucide-icon>
-          VIP
-        </span>
-        }
-        <h3 class="product-title">{{ product.title }}</h3>
-        <p class="product-description">{{ product.description }}</p>
-
-        <!-- Informations du vendeur -->
-        <div class="product-seller">
-          <div class="seller-header">
-            <lucide-icon [img]="User" [size]="16" class="seller-icon"></lucide-icon>
-            <span class="seller-label">Vendeur</span>
-          </div>
-          <div class="seller-name">
-            {{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}
-          </div>
-          <div class="seller-contact">
-            @if (product.seller.email) {
-            <a
-              [href]="'mailto:' + product.seller.email"
-              class="contact-link"
-              title="Contacter par email"
-            >
-              <lucide-icon [img]="Mail" [size]="16"></lucide-icon>
-              <span class="contact-text">Email</span>
-            </a>
-            } @if (product.seller.phone) {
-            <a
-              [href]="'tel:' + product.seller.phone"
-              class="contact-link"
-              title="Contacter par téléphone"
-            >
-              <lucide-icon [img]="Phone" [size]="16"></lucide-icon>
-              <span class="contact-text">Téléphone</span>
-            </a>
-            }
-          </div>
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        <span class="hero-highlight">Trouvez</span> des produits d'occasion
+        <span class="hero-highlight">de qualité</span>
+      </h1>
+      <p class="hero-subtitle">
+        Tous les produits sont vérifiés avec photos authentiques.
+        Achetez et vendez en toute confiance.
+      </p>
+      <div class="hero-features">
+        <div class="feature-item">
+          <lucide-icon [img]="Shield" [size]="20" class="feature-icon"></lucide-icon>
+          <span>Produits vérifiés</span>
         </div>
+        <div class="feature-item">
+          <lucide-icon [img]="Camera" [size]="20" class="feature-icon"></lucide-icon>
+          <span>Photos authentiques</span>
+        </div>
+        <div class="feature-item">
+          <lucide-icon [img]="Users" [size]="20" class="feature-icon"></lucide-icon>
+          <span>Communauté fiable</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-image-placeholder">
+        <lucide-icon [img]="Package" [size]="80" class="hero-image-icon"></lucide-icon>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div class="product-footer">
-          <span class="product-views">
-            <lucide-icon [img]="Eye" [size]="16"></lucide-icon>
-            {{ product.views }} vues
-          </span>
-          <button class="btn btn-sm btn-primary" (click)="viewProduct(product, $event)">
-            Voir détails
+<!-- Search Section -->
+<section class="search-section">
+  <div class="search-container">
+    <div class="search-header">
+      <h2 class="search-title">Rechercher des produits</h2>
+      <p class="search-subtitle">Trouvez exactement ce que vous cherchez</p>
+    </div>
+    <div class="search-form-card">
+      <form (ngSubmit)="onSearch()" class="search-form">
+        <div class="search-input-group">
+          <lucide-icon [img]="Search" [size]="20" class="search-icon"></lucide-icon>
+          <input
+            type="text"
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+            name="search"
+            class="search-input"
+            placeholder="Rechercher un produit, une marque..."
+          />
+        </div>
+        <button type="submit" class="search-btn">
+          <lucide-icon [img]="Search" [size]="18"></lucide-icon>
+          <span>Rechercher</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+  <div class="products-container">
+    <div class="products-header">
+      <h2 class="products-title">
+        <lucide-icon [img]="Package" [size]="24" class="section-icon"></lucide-icon>
+        Produits disponibles
+      </h2>
+      <p class="products-subtitle">Découvrez notre sélection de produits d'occasion</p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <p class="loading-text">Chargement des produits...</p>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @else if (products().length === 0) {
+      <div class="empty-state">
+        <div class="empty-content">
+          <lucide-icon [img]="Package" [size]="64" class="empty-icon"></lucide-icon>
+          <h3 class="empty-title">Aucun produit trouvé</h3>
+          <p class="empty-description">
+            Aucun produit ne correspond à votre recherche.
+            Essayez de modifier vos critères.
+          </p>
+          <button class="btn btn-primary" (click)="resetSearch()">
+            <lucide-icon [img]="RotateCcw" [size]="16"></lucide-icon>
+            <span>Voir tous les produits</span>
           </button>
         </div>
       </div>
-    </div>
+    }
+
+    <!-- Products Grid -->
+    @else {
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+          <div class="product-card" (click)="viewProduct(product, $event)">
+            <div class="product-image-container">
+              <img
+                [src]="getPrimaryPhoto(product)"
+                [alt]="product.title"
+                class="product-image"
+                appNoDownload
+                (error)="$any($event.target).src = '/placeholder.svg'"
+              />
+              @if (product.isVip) {
+                <div class="vip-badge">
+                  <lucide-icon [img]="Star" [size]="14"></lucide-icon>
+                  <span>VIP</span>
+                </div>
+              }
+            </div>
+
+            <div class="product-content">
+              <div class="product-header">
+                <h3 class="product-title">{{ product.title }}</h3>
+                <div class="product-stats">
+                  <span class="stat-item">
+                    <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
+                    {{ product.views }}
+                  </span>
+                </div>
+              </div>
+
+              <p class="product-description">{{ product.description | slice:0:100 }}...</p>
+
+              <div class="product-seller-info">
+                <div class="seller-avatar">
+                  <lucide-icon [img]="User" [size]="16"></lucide-icon>
+                </div>
+                <div class="seller-details">
+                  <span class="seller-name">
+                    {{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}
+                  </span>
+                  <div class="seller-contact">
+                    @if (product.seller.email) {
+                      <a [href]="'mailto:' + product.seller.email" class="contact-btn">
+                        <lucide-icon [img]="Mail" [size]="14"></lucide-icon>
+                      </a>
+                    }
+                    @if (product.seller.phone) {
+                      <a [href]="'tel:' + product.seller.phone" class="contact-btn">
+                        <lucide-icon [img]="Phone" [size]="14"></lucide-icon>
+                      </a>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-actions">
+                <button class="btn btn-primary btn-sm" (click)="viewProduct(product, $event)">
+                  <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
+                  <span>Voir détails</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
     }
   </div>
-  } }
-</div>
+</section>
 
 <!-- Modal Product Details -->
 @if (showModal() && selectedProduct(); as product) {
