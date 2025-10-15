@@ -233,30 +233,16 @@
       <lucide-icon [img]="X" [size]="24"></lucide-icon>
     </button>
 
-    <!-- Images Gallery -->
-    <div class="modal-gallery">
-      @for (photo of product.photos; track photo.id) {
-      <img
-        [src]="photo.url"
-        [alt]="'Photo ' + ($index + 1)"
-        [title]="'Photo ' + ($index + 1) + ' de ' + product.title"
-        class="modal-gallery-image"
-        appNoDownload
-        (error)="$any($event.target).src = '/placeholder.svg'"
-      />
-      }
-    </div>
-
-    <!-- Product Info -->
-    <div class="modal-content">
-      <div class="modal-header-section">
+    <!-- Product Header -->
+    <div class="modal-header">
+      <div class="modal-header-content">
         @if (product.isVip) {
         <span class="badge badge-vip">
           <lucide-icon [img]="Star" [size]="16"></lucide-icon>
           VIP
         </span>
         }
-        <h2 class="modal-title">{{ product.title }}</h2>
+        <h1 class="modal-title">{{ product.title }}</h1>
         <div class="modal-meta">
           <span class="meta-item">
             <lucide-icon [img]="Eye" [size]="16"></lucide-icon>
@@ -264,44 +250,61 @@
           </span>
         </div>
       </div>
+    </div>
 
-      <div class="modal-section">
-        <h3 class="modal-section-title">Description</h3>
-        <p class="modal-description">{{ product.description }}</p>
+    <!-- Main Content -->
+    <div class="modal-body">
+      <!-- Images Gallery -->
+      <div class="modal-gallery">
+        @for (photo of product.photos; track photo.id) {
+        <img
+          [src]="photo.url"
+          [alt]="'Photo ' + ($index + 1)"
+          [title]="'Photo ' + ($index + 1) + ' de ' + product.title"
+          class="modal-gallery-image"
+          appNoDownload
+          (error)="$any($event.target).src = '/placeholder.svg'"
+        />
+        }
       </div>
 
-      <div class="modal-section">
-        <h3 class="modal-section-title">
-          <lucide-icon [img]="User" [size]="20"></lucide-icon>
-          Informations du vendeur
-        </h3>
-        <div class="seller-contact">
-          <div class="contact-item">
-            <lucide-icon [img]="User" [size]="18" class="contact-icon"></lucide-icon>
-            <div>
-              <span class="contact-label">Nom du vendeur</span>
-              <span class="contact-value"
-                >{{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}</span
-              >
+      <!-- Product Details -->
+      <div class="modal-details">
+        <div class="modal-section">
+          <h3 class="modal-section-title">
+            <lucide-icon [img]="FileText" [size]="20"></lucide-icon>
+            Description
+          </h3>
+          <p class="modal-description">{{ product.description }}</p>
+        </div>
+
+        <div class="modal-section">
+          <h3 class="modal-section-title">
+            <lucide-icon [img]="User" [size]="20"></lucide-icon>
+            Informations du vendeur
+          </h3>
+          <div class="seller-info-card">
+            <div class="seller-avatar-large">
+              <lucide-icon [img]="User" [size]="32"></lucide-icon>
+            </div>
+            <div class="seller-details-large">
+              <h4 class="seller-name-large">{{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}</h4>
+              <div class="seller-contact-large">
+                @if (product.seller.email) {
+                <a [href]="'mailto:' + product.seller.email" class="contact-btn-large">
+                  <lucide-icon [img]="Mail" [size]="18"></lucide-icon>
+                  <span>{{ product.seller.email }}</span>
+                </a>
+                }
+                @if (product.seller.phone) {
+                <a [href]="'tel:' + product.seller.phone" class="contact-btn-large">
+                  <lucide-icon [img]="Phone" [size]="18"></lucide-icon>
+                  <span>{{ product.seller.phone }}</span>
+                </a>
+                }
+              </div>
             </div>
           </div>
-          @if (product.seller.email) {
-          <a [href]="'mailto:' + product.seller.email" class="contact-item contact-link">
-            <lucide-icon [img]="Mail" [size]="18" class="contact-icon"></lucide-icon>
-            <div>
-              <span class="contact-label">Email</span>
-              <span class="contact-value">{{ product.seller.email }}</span>
-            </div>
-          </a>
-          } @if (product.seller.phone) {
-          <a [href]="'tel:' + product.seller.phone" class="contact-item contact-link">
-            <lucide-icon [img]="Phone" [size]="18" class="contact-icon"></lucide-icon>
-            <div>
-              <span class="contact-label">Téléphone</span>
-              <span class="contact-value">{{ product.seller.phone }}</span>
-            </div>
-          </a>
-          }
         </div>
       </div>
     </div>

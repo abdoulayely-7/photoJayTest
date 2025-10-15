@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { Product } from '../../models/product.model';
-import { LucideAngularModule, Camera, Search, Eye, Star, Plus, X, Phone, Mail, User, Menu, Palette, Shield, Package, Users, RotateCcw } from 'lucide-angular';
+import { LucideAngularModule, Camera, Search, Eye, Star, Plus, X, Phone, Mail, User, Menu, Palette, Shield, Package, Users, RotateCcw, FileText } from 'lucide-angular';
 import { NoDownloadDirective } from '../../directives/no-download.directive';
 import { ThemeSelectorComponent } from '../theme-selector/theme-selector';
 
@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   readonly Package = Package;
   readonly Users = Users;
   readonly RotateCcw = RotateCcw;
+  readonly FileText = FileText;
 
   products = signal<Product[]>([]);
   loading = signal<boolean>(false);
