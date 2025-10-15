@@ -73,27 +73,15 @@
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
       <nav class="sidebar-nav">
-        <button
-          class="sidebar-nav-item"
-          [class.active]="currentView() === 'sell'"
-          (click)="setView('sell')"
-        >
+        <button class="sidebar-nav-item" [class.active]="currentView() === 'sell'" (click)="setView('sell')">
           <lucide-icon [img]="Camera" [size]="20"></lucide-icon>
           <span>Vendre un produit</span>
         </button>
-        <button
-          class="sidebar-nav-item"
-          [class.active]="currentView() === 'dashboard'"
-          (click)="setView('dashboard')"
-        >
+        <button class="sidebar-nav-item" [class.active]="currentView() === 'dashboard'" (click)="setView('dashboard')">
           <lucide-icon [img]="LayoutDashboard" [size]="20"></lucide-icon>
           <span>Mes produits</span>
         </button>
-        <button
-          class="sidebar-nav-item"
-          [class.active]="currentView() === 'profile'"
-          (click)="setView('profile')"
-        >
+        <button class="sidebar-nav-item" [class.active]="currentView() === 'profile'" (click)="setView('profile')">
           <lucide-icon [img]="User" [size]="20"></lucide-icon>
           <span>Profil vendeur</span>
         </button>
@@ -128,7 +116,8 @@
             <div class="info-box">
               <p class="info-text">
                 <lucide-icon [img]="AlertCircle" [size]="20" class="icon-inline"></lucide-icon>
-                <strong>Important:</strong> Prenez des photos claires de votre produit directement avec votre appareil photo.
+                <strong>Important:</strong> Prenez des photos claires de votre produit directement avec votre appareil
+                photo.
                 <strong>Les uploads depuis la galerie sont bloqués pour garantir l'authenticité.</strong>
               </p>
             </div>
@@ -146,12 +135,8 @@
                   </div>
 
                   <div class="photo-upload-area">
-                    <button
-                      type="button"
-                      class="photo-upload-btn"
-                      (click)="openCamera()"
-                      [disabled]="photos().length >= maxPhotos"
-                    >
+                    <button type="button" class="photo-upload-btn" (click)="openCamera()"
+                      [disabled]="photos().length >= maxPhotos">
                       <lucide-icon [img]="Camera" [size]="32"></lucide-icon>
                       <span>
                         <ng-container *ngIf="photos().length === 0">Prendre une photo</ng-container>
@@ -163,19 +148,35 @@
                       ⚠️ Prenez entre 1 et 5 photos directement avec votre appareil photo.
                       Les uploads depuis la galerie sont bloqués pour garantir l'authenticité.
                     </p>
+                    <!-- Inline camera (appears inside the form for better UX) -->
+                    <ng-container *ngIf="showCamera()">
+                      <div class="inline-camera">
+                        <div class="camera-viewport">
+                          <video #videoElement autoplay playsinline class="camera-video"></video>
+                          <canvas #canvasElement class="hidden-canvas" aria-hidden="true"></canvas>
+                        </div>
+                        <div class="camera-controls">
+                          <button type="button" class="btn btn-primary btn-capture" (click)="capturePhoto()">
+                            <lucide-icon [img]="Camera" [size]="24"></lucide-icon>
+                            <span>Capturer</span>
+                          </button>
+                          <button type="button" class="btn btn-outline" (click)="closeCamera()">
+                            <lucide-icon [img]="X" [size]="16"></lucide-icon>
+                            <span>Annuler</span>
+                          </button>
+                        </div>
+                      </div>
+                    </ng-container>
                   </div>
 
                   <ng-container *ngIf="photoPreviewUrls().length > 0">
                     <div class="photo-grid">
                       <ng-container *ngFor="let url of photoPreviewUrls(); let i = index">
                         <div class="photo-item">
-                          <img [src]="url" alt="Photo produit" class="photo-image" (error)="$any($event.target).src='/placeholder.svg'" />
-                          <button
-                            type="button"
-                            class="photo-remove"
-                            (click)="removePhoto(i)"
-                            aria-label="Supprimer la photo"
-                          >
+                          <img [src]="url" alt="Photo produit" class="photo-image"
+                            (error)="$any($event.target).src='/placeholder.svg'" />
+                          <button type="button" class="photo-remove" (click)="removePhoto(i)"
+                            aria-label="Supprimer la photo">
                             <lucide-icon [img]="X" [size]="16"></lucide-icon>
                           </button>
                         </div>
@@ -197,16 +198,9 @@
                         <lucide-icon [img]="Type" [size]="16"></lucide-icon>
                         Titre du produit *
                       </label>
-                      <input
-                        id="title-input"
-                        type="text"
-                        [value]="title()"
-                        (input)="title.set($any($event.target).value)"
-                        name="title"
-                        class="field-input"
-                        placeholder="Ex: iPhone 12 Pro 128GB"
-                        required
-                      />
+                      <input id="title-input" type="text" [value]="title()"
+                        (input)="title.set($any($event.target).value)" name="title" class="field-input"
+                        placeholder="Ex: iPhone 12 Pro 128GB" required />
                     </div>
 
                     <div class="field-group">
@@ -214,17 +208,9 @@
                         <lucide-icon [img]="FileText" [size]="16"></lucide-icon>
                         Description *
                       </label>
-                      <textarea
-                        id="description-input"
-                        [value]="description()"
-                        (input)="description.set($any($event.target).value)"
-                        name="description"
-                        class="field-textarea"
-                        placeholder="Décrivez votre produit en détail..."
-                        required
-                        maxlength="1000"
-                        rows="4"
-                      ></textarea>
+                      <textarea id="description-input" [value]="description()"
+                        (input)="description.set($any($event.target).value)" name="description" class="field-textarea"
+                        placeholder="Décrivez votre produit en détail..." required maxlength="1000" rows="4"></textarea>
                     </div>
                   </div>
                 </div>
@@ -236,16 +222,13 @@
                       <lucide-icon [img]="AlertCircle" [size]="20" class="notice-icon"></lucide-icon>
                       <div>
                         <h4>Important</h4>
-                        <p>Votre produit sera examiné par notre équipe avant publication. Vous recevrez un email de confirmation une fois approuvé.</p>
+                        <p>Votre produit sera examiné par notre équipe avant publication. Vous recevrez un email de
+                          confirmation une fois approuvé.</p>
                       </div>
                     </div>
 
                     <div class="form-actions">
-                      <button
-                        type="submit"
-                        class="btn btn-primary btn-large"
-                        [disabled]="submitting()"
-                      >
+                      <button type="submit" class="btn btn-primary btn-large" [disabled]="submitting()">
                         <ng-container *ngIf="submitting()">
                           <div class="btn-loading">
                             <div class="spinner"></div>
@@ -313,7 +296,8 @@
                 <div class="empty-state-content">
                   <lucide-icon [img]="Package" [size]="64" class="empty-icon"></lucide-icon>
                   <h3 class="empty-title">Aucun produit publié</h3>
-                  <p class="empty-description">Vous n'avez pas encore publié de produit. Commencez par en ajouter un !</p>
+                  <p class="empty-description">Vous n'avez pas encore publié de produit. Commencez par en ajouter un !
+                  </p>
                   <button class="btn btn-primary btn-large" (click)="setView('sell')">
                     <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
                     <span>Publier mon premier produit</span>
@@ -328,35 +312,24 @@
                   <h3 class="filters-title">Filtrer par statut</h3>
                 </div>
                 <div class="filters-list">
-                  <button
-                    class="filter-chip"
+                  <button class="filter-chip"
                     [class.active]="!selectedStatusFilter() || selectedStatusFilter() === 'ALL'"
-                    (click)="setStatusFilter('ALL')"
-                  >
+                    (click)="setStatusFilter('ALL')">
                     <span>Tous</span>
                     <span class="filter-count">{{ sellerProducts().length }}</span>
                   </button>
-                  <button
-                    class="filter-chip"
-                    [class.active]="selectedStatusFilter() === 'PENDING'"
-                    (click)="setStatusFilter('PENDING')"
-                  >
+                  <button class="filter-chip" [class.active]="selectedStatusFilter() === 'PENDING'"
+                    (click)="setStatusFilter('PENDING')">
                     <span>En attente</span>
                     <span class="filter-count">{{ getProductsByStatus('PENDING').length }}</span>
                   </button>
-                  <button
-                    class="filter-chip"
-                    [class.active]="selectedStatusFilter() === 'APPROVED'"
-                    (click)="setStatusFilter('APPROVED')"
-                  >
+                  <button class="filter-chip" [class.active]="selectedStatusFilter() === 'APPROVED'"
+                    (click)="setStatusFilter('APPROVED')">
                     <span>Approuvés</span>
                     <span class="filter-count">{{ getProductsByStatus('APPROVED').length }}</span>
                   </button>
-                  <button
-                    class="filter-chip"
-                    [class.active]="selectedStatusFilter() === 'REJECTED'"
-                    (click)="setStatusFilter('REJECTED')"
-                  >
+                  <button class="filter-chip" [class.active]="selectedStatusFilter() === 'REJECTED'"
+                    (click)="setStatusFilter('REJECTED')">
                     <span>Rejetés</span>
                     <span class="filter-count">{{ getProductsByStatus('REJECTED').length }}</span>
                   </button>
@@ -370,7 +343,8 @@
                     <div class="product-list-item">
                       <div class="product-media">
                         <ng-container *ngIf="product.photos && product.photos.length > 0; else noThumb">
-                          <img [src]="product.photos[0].url" [alt]="product.title" class="product-thumbnail" (error)="$any($event.target).src='/placeholder.svg'" />
+                          <img [src]="product.photos[0].url" [alt]="product.title" class="product-thumbnail"
+                            (error)="$any($event.target).src='/placeholder.svg'" />
                         </ng-container>
                         <ng-template #noThumb>
                           <div class="no-thumbnail">
@@ -502,17 +476,9 @@
                         <lucide-icon [img]="User" [size]="16"></lucide-icon>
                         Prénom *
                       </label>
-                      <input
-                        id="seller-firstname-input"
-                        type="text"
-                        [value]="sellerFirstName()"
-                        (input)="sellerFirstName.set($any($event.target).value)"
-                        name="sellerFirstName"
-                        class="field-input"
-                        placeholder="Votre prénom"
-                        required
-                        maxlength="50"
-                      />
+                      <input id="seller-firstname-input" type="text" [value]="sellerFirstName()"
+                        (input)="sellerFirstName.set($any($event.target).value)" name="sellerFirstName"
+                        class="field-input" placeholder="Votre prénom" required maxlength="50" />
                     </div>
 
                     <div class="form-field">
@@ -520,17 +486,9 @@
                         <lucide-icon [img]="User" [size]="16"></lucide-icon>
                         Nom *
                       </label>
-                      <input
-                        id="seller-lastname-input"
-                        type="text"
-                        [value]="sellerLastName()"
-                        (input)="sellerLastName.set($any($event.target).value)"
-                        name="sellerLastName"
-                        class="field-input"
-                        placeholder="Votre nom"
-                        required
-                        maxlength="50"
-                      />
+                      <input id="seller-lastname-input" type="text" [value]="sellerLastName()"
+                        (input)="sellerLastName.set($any($event.target).value)" name="sellerLastName"
+                        class="field-input" placeholder="Votre nom" required maxlength="50" />
                     </div>
 
                     <div class="form-field">
@@ -538,17 +496,9 @@
                         <lucide-icon [img]="Type" [size]="16"></lucide-icon>
                         Email *
                       </label>
-                      <input
-                        id="seller-email-input"
-                        type="email"
-                        [value]="sellerEmail()"
-                        (input)="sellerEmail.set($any($event.target).value)"
-                        name="sellerEmail"
-                        class="field-input"
-                        placeholder="votre.email@exemple.com"
-                        required
-                        maxlength="255"
-                      />
+                      <input id="seller-email-input" type="email" [value]="sellerEmail()"
+                        (input)="sellerEmail.set($any($event.target).value)" name="sellerEmail" class="field-input"
+                        placeholder="votre.email@exemple.com" required maxlength="255" />
                     </div>
 
                     <div class="form-field">
@@ -556,16 +506,9 @@
                         <lucide-icon [img]="Type" [size]="16"></lucide-icon>
                         Téléphone
                       </label>
-                      <input
-                        id="seller-phone-input"
-                        type="tel"
-                        [value]="sellerPhone()"
-                        (input)="sellerPhone.set($any($event.target).value)"
-                        name="sellerPhone"
-                        class="field-input"
-                        placeholder="+33 6 12 34 56 78"
-                        maxlength="20"
-                      />
+                      <input id="seller-phone-input" type="tel" [value]="sellerPhone()"
+                        (input)="sellerPhone.set($any($event.target).value)" name="sellerPhone" class="field-input"
+                        placeholder="+33 6 12 34 56 78" maxlength="20" />
                       <span class="field-hint">Optionnel - pour être contacté directement par les acheteurs</span>
                     </div>
                   </div>
@@ -617,14 +560,10 @@
 
 <!-- Modal Détails Produit -->
 <ng-container *ngIf="showProductModal() && selectedProduct() as product">
-  <div
-    class="modal-overlay"
-    (click)="closeProductModal()"
-    tabindex="0"
-    (keydown.enter)="closeProductModal()"
-    (keydown.space)="closeProductModal()"
-  >
-  <div class="modal-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()" role="dialog" aria-modal="true" tabindex="0">
+  <div class="modal-overlay" (click)="closeProductModal()" tabindex="0" (keydown.enter)="closeProductModal()"
+    (keydown.space)="closeProductModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()"
+      (keydown.space)="$event.stopPropagation()" role="dialog" aria-modal="true" tabindex="0">
       <div class="modal-header">
         <h2>{{ product.title }}</h2>
         <button class="modal-close" (click)="closeProductModal()" aria-label="Fermer">
@@ -634,12 +573,8 @@
       <div class="modal-body">
         <div class="modal-images">
           <ng-container *ngFor="let photo of product.photos; let i = index">
-            <img
-              [src]="photo.url"
-              [alt]="'Photo ' + (i + 1)"
-              class="modal-image"
-              (error)="$any($event.target).src = '/placeholder.svg'"
-            />
+            <img [src]="photo.url" [alt]="'Photo ' + (i + 1)" class="modal-image"
+              (error)="$any($event.target).src = '/placeholder.svg'" />
           </ng-container>
         </div>
         <div class="modal-info">
@@ -677,58 +612,4 @@
   </div>
 </ng-container>
 
-<!-- Modal Caméra -->
-<ng-container *ngIf="showCamera()">
-  <div
-    class="camera-modal-overlay"
-    (click)="closeCamera()"
-    tabindex="0"
-    (keydown.enter)="closeCamera()"
-    (keydown.space)="closeCamera()"
-  >
-  <div class="camera-modal" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()" role="dialog" aria-modal="true" tabindex="0">
-      <div class="camera-header">
-        <h3>
-          <lucide-icon [img]="Camera" [size]="24"></lucide-icon>
-          Prendre une photo
-        </h3>
-        <button
-          type="button"
-          class="camera-close-btn"
-          (click)="closeCamera()"
-          aria-label="Fermer la caméra"
-        >
-          <lucide-icon [img]="X" [size]="24"></lucide-icon>
-        </button>
-      </div>
-
-      <div class="camera-viewport">
-        <video
-          #videoElement
-          autoplay
-          playsinline
-          class="camera-video"
-        ></video>
-        <canvas #canvasElement class="hidden-canvas"></canvas>
-      </div>
-
-      <div class="camera-controls">
-        <button
-          type="button"
-          class="btn btn-primary btn-capture"
-          (click)="capturePhoto()"
-        >
-          <lucide-icon [img]="Camera" [size]="32"></lucide-icon>
-          <span>Capturer</span>
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          (click)="closeCamera()"
-        >
-          Annuler
-        </button>
-      </div>
-    </div>
-  </div>
-</ng-container>
+<!-- camera inline now integrated into the form above (modal removed) -->

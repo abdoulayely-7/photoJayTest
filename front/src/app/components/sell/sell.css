@@ -4,7 +4,7 @@
 .header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 50;
@@ -58,7 +58,7 @@
 }
 
 .nav-link:hover {
-  background: #f3f4f6;
+  background: white;
   color: #374151;
 }
 
@@ -129,7 +129,7 @@
   right: 0;
   background: white;
   border-top: 1px solid #e5e7eb;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .mobile-menu-content {
@@ -153,7 +153,7 @@
 
 .mobile-menu-link:hover,
 .mobile-login-btn:hover {
-  background: #f3f4f6;
+  background: white;
 }
 
 .mobile-user-info {
@@ -187,7 +187,7 @@
 .main-content {
   display: flex;
   min-height: calc(100vh - 4rem);
-  background: #f9fafb;
+  background: #ffffff;
 }
 
 /* Sidebar */
@@ -216,7 +216,7 @@
 }
 
 .sidebar-nav-item:hover {
-  background: #f3f4f6;
+  background: white;
   color: #374151;
 }
 
@@ -281,7 +281,7 @@
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .user-info {
@@ -314,7 +314,7 @@
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   min-width: 120px;
 }
 
@@ -358,7 +358,7 @@
   border-radius: 0.75rem;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .section-header {
@@ -380,13 +380,13 @@
   padding: 2rem;
   border: 2px dashed #d1d5db;
   border-radius: 0.75rem;
-  background: #f9fafb;
-  transition: all 0.2s;
+  background: white;
+  transition: border-color 0.15s ease;
 }
 
 .photo-upload-area:hover {
   border-color: #3b82f6;
-  background: #eff6ff;
+  background: white;
 }
 
 .photo-upload-btn {
@@ -406,9 +406,9 @@
 
 .photo-upload-btn:hover:not(:disabled) {
   border-color: #3b82f6;
-  background: #eff6ff;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  background: white;
+  transform: none;
+  box-shadow: none;
 }
 
 .photo-upload-btn:disabled {
@@ -506,7 +506,7 @@
 .field-textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: none;
 }
 
 .field-textarea {
@@ -531,8 +531,8 @@
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
   color: #1e40af;
 }
@@ -586,13 +586,13 @@
 .btn-primary {
   background: #3b82f6;
   color: white;
-  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+  box-shadow: none;
 }
 
 .btn-primary:hover:not(:disabled) {
   background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-outline {
@@ -602,7 +602,7 @@
 }
 
 .btn-outline:hover:not(:disabled) {
-  background: #f9fafb;
+  background: white;
   border-color: #9ca3af;
   color: #374151;
 }
@@ -642,7 +642,7 @@
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   flex: 1;
 }
 
@@ -721,7 +721,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .products-list {
@@ -739,7 +739,7 @@
 }
 
 .product-list-item:hover {
-  background: #f9fafb;
+  background: white;
 }
 
 .product-list-item:last-child {
@@ -764,7 +764,7 @@
 .no-thumbnail {
   width: 100%;
   height: 100%;
-  background: #f3f4f6;
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -854,7 +854,7 @@
 }
 
 .btn-info:hover {
-  background: #eff6ff;
+  background: white;
 }
 
 .btn-success {
@@ -893,7 +893,7 @@
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .empty-state-content {
@@ -932,7 +932,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .profile-avatar-section {
@@ -969,7 +969,7 @@
 .profile-role {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  background: #eff6ff;
+  background: white;
   color: #3b82f6;
   border-radius: 1rem;
   font-size: 0.75rem;
@@ -989,7 +989,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 }
 
 .form-section-header {
@@ -1027,7 +1027,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
   padding: 3rem 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   text-align: center;
   max-width: 400px;
   width: 100%;
