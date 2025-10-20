@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
-import { Product } from '../../models/product.model';
-import { LucideAngularModule, Camera, User, Eye, Home, LogOut, RefreshCw, CheckCircle, XCircle, Trash2, Clock, Calendar, Shield, X } from 'lucide-angular';
+import { Product, Category } from '../../models/product.model';
+import { LucideAngularModule, Camera, User, Eye, Home, LogOut, RefreshCw, CheckCircle, XCircle, Trash2, Clock, Calendar, Shield, X, Plus, Settings, Package } from 'lucide-angular';
 import { NoDownloadDirective } from '../../directives/no-download.directive';
 import { NotificationService } from '../../services/notification.service';
 import { NotificationBellComponent } from '../notification-bell/notification-bell';
@@ -31,6 +31,9 @@ export class AdminComponent implements OnInit {
   readonly Calendar = Calendar;
   readonly Shield = Shield;
   readonly X = X;
+  readonly Plus = Plus;
+  readonly Settings = Settings;
+  readonly Package = Package;
 
   private apiService = inject(ApiService);
   public authService = inject(AuthService);
@@ -41,7 +44,10 @@ export class AdminComponent implements OnInit {
   products = signal<Product[]>([]);
   selectedProduct = signal<Product | null>(null);
   showModal = signal<boolean>(false);
-  currentView = signal<'pending' | 'approved'>('pending');
+  currentView = signal<'pending' | 'approved' | 'categories'>('pending');
+  categories = signal<Category[]>([]);
+  showCategoryModal = signal<boolean>(false);
+  selectedCategory = signal<Category | null>(null);
 
   ngOnInit(): void {
     if (!this.authService.isAuthenticated()) {
@@ -49,6 +55,7 @@ export class AdminComponent implements OnInit {
       return;
     }
     this.loadPendingProducts();
+    this.loadCategories();
   }
 
   loadPendingProducts(): void {
@@ -89,11 +96,25 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  switchView(view: 'pending' | 'approved'): void {
+  loadCategories(): void {
+    this.apiService.getCategories().subscribe({
+      next: (categories: Category[]) => {
+        this.categories.set(categories);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des catégories:', error);
+      }
+    });
+  }
+
+  switchView(view: 'pending' | 'approved' | 'categories'): void {
     if (view === 'pending') {
       this.loadPendingProducts();
-    } else {
+    } else if (view === 'approved') {
       this.loadApprovedProducts();
+    } else if (view === 'categories') {
+      this.currentView.set('categories');
+      this.loadCategories();
     }
   }
 
@@ -232,5 +253,51 @@ export class AdminComponent implements OnInit {
 
   getApprovedCount(): number {
     return this.products().filter(p => p.status === 'APPROVED').length;
+  }
+
+  openCategoryModal(): void {
+    this.selectedCategory.set(null);
+    this.showCategoryModal.set(true);
+  }
+
+  editCategory(category: Category): void {
+    this.selectedCategory.set(category);
+    this.showCategoryModal.set(true);
+  }
+
+  deleteCategory(category: Category): void {
+    Swal.fire({
+      title: 'Supprimer la catégorie',
+      text: `Êtes-vous sûr de vouloir supprimer "${category.name}" ? Cette action est irréversible.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.apiService.deleteCategory(category.id).subscribe({
+          next: () => {
+            this.categories.set(this.categories().filter(c => c.id !== category.id));
+            Swal.fire({
+              title: 'Succès!',
+              text: 'Catégorie supprimée avec succès',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          },
+          error: (error: any) => {
+            console.error('Erreur lors de la suppression:', error);
+            Swal.fire({
+              title: 'Erreur',
+              text: 'Erreur lors de la suppression de la catégorie',
+              icon: 'error'
+            });
+          }
+        });
+      }
+    });
   }
 }

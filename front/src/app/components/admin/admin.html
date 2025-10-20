@@ -23,17 +23,17 @@
       <!-- Notification Bell -->
       <app-notification-bell></app-notification-bell>
 
-      @if (authService.currentUser(); as user) {
-      <div class="user-info">
-        <div class="user-avatar-circle">
-          <lucide-icon [img]="User" [size]="20"></lucide-icon>
+      <ng-container *ngIf="authService.currentUser() as user">
+        <div class="user-info">
+          <div class="user-avatar-circle">
+            <lucide-icon [img]="User" [size]="20"></lucide-icon>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+            <span class="user-role">{{ user.role }}</span>
+          </div>
         </div>
-        <div class="user-details">
-          <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
-          <span class="user-role">{{ user.role }}</span>
-        </div>
-      </div>
-      }
+      </ng-container>
 
       <button class="btn btn-logout" (click)="logout()">
         <lucide-icon [img]="LogOut" [size]="20"></lucide-icon>
@@ -72,6 +72,14 @@
             <lucide-icon [img]="CheckCircle" [size]="16"></lucide-icon>
             Approuvés ({{ getApprovedCount() }})
           </button>
+          <button
+            class="tab-button"
+            [class.active]="currentView() === 'categories'"
+            (click)="switchView('categories')"
+          >
+            <lucide-icon [img]="Settings" [size]="16"></lucide-icon>
+            Catégories ({{ categories().length }})
+          </button>
         </div>
         <button
           class="btn btn-primary"
@@ -83,48 +91,48 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    @if (loading()) {
-    <div class="loading-state">
-      <div class="spinner-large"></div>
-      <p>Chargement des produits...</p>
-    </div>
-    }
-
-    <!-- Empty State -->
-    @else if (products().length === 0) {
-    <div class="empty-state">
-      <div class="empty-icon">
-        <lucide-icon [img]="CheckCircle" [size]="64"></lucide-icon>
+    <!-- Content: Loading / Products / Categories -->
+    <ng-container *ngIf="loading(); else loadedContent">
+      <div class="loading-state">
+        <div class="spinner-large"></div>
+        <p>Chargement des produits...</p>
       </div>
-      <h2>Aucun produit en attente</h2>
-      <p>Tous les produits ont été modérés. Excellent travail!</p>
-      <a routerLink="/" class="btn btn-secondary"> Voir les produits approuvés </a>
-    </div>
-    }
+    </ng-container>
 
-    <!-- Products Grid -->
-    @else {
-    <div class="products-stats">
-      <div class="stat-card">
-        <lucide-icon [img]="Clock" [size]="32" class="stat-icon"></lucide-icon>
-        <div class="stat-content">
-          <span class="stat-value">{{ getPendingCount() }}</span>
-          <span class="stat-label">En attente</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <lucide-icon [img]="CheckCircle" [size]="32" class="stat-icon"></lucide-icon>
-        <div class="stat-content">
-          <span class="stat-value">{{ getApprovedCount() }}</span>
-          <span class="stat-label">Approuvés</span>
-        </div>
-      </div>
-    </div>
+    <ng-template #loadedContent>
+      <ng-container *ngIf="currentView() === 'pending' || currentView() === 'approved'">
+        <ng-container *ngIf="products().length === 0; else productsArea">
+          <div class="empty-state">
+            <div class="empty-icon">
+              <lucide-icon [img]="CheckCircle" [size]="64"></lucide-icon>
+            </div>
+            <h2>Aucun produit en attente</h2>
+            <p>Tous les produits ont été modérés. Excellent travail!</p>
+            <a routerLink="/" class="btn btn-secondary"> Voir les produits approuvés </a>
+          </div>
+        </ng-container>
 
-    <div class="admin-products-grid">
-      @for (product of products(); track product.id) {
-      <div class="admin-product-card">
+        <ng-template #productsArea>
+          <div class="products-stats">
+            <div class="stat-card">
+              <lucide-icon [img]="Clock" [size]="32" class="stat-icon"></lucide-icon>
+              <div class="stat-content">
+                <span class="stat-value">{{ getPendingCount() }}</span>
+                <span class="stat-label">En attente</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <lucide-icon [img]="CheckCircle" [size]="32" class="stat-icon"></lucide-icon>
+              <div class="stat-content">
+                <span class="stat-value">{{ getApprovedCount() }}</span>
+                <span class="stat-label">Approuvés</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-products-grid">
+            <ng-container *ngFor="let product of products()">
+              <div class="admin-product-card">
         <div class="product-image-section">
           <img
             [src]="getPrimaryPhoto(product)"
@@ -133,39 +141,39 @@
             appNoDownload
             (error)="$any($event.target).src = '/placeholder.svg'"
           />
-          @if (product.photos.length > 1) {
-          <div class="product-thumbnails">
-            @for (photo of product.photos.slice(1, 4); track photo.id) {
-            <img
-              [src]="photo.url"
-              [alt]="'Photo ' + ($index + 2)"
-              class="thumbnail"
-              appNoDownload
-              (error)="$any($event.target).src = '/placeholder.svg'"
-            />
-            } @if (product.photos.length > 4) {
-            <div class="thumbnail-more">+{{ product.photos.length - 4 }}</div>
-            }
-          </div>
-          }
+                  <ng-container *ngIf="product.photos && product.photos.length > 1">
+                    <div class="product-thumbnails">
+                      <ng-container *ngFor="let photo of product.photos.slice(1,4); let idx = index">
+                        <img
+                          [src]="photo.url"
+                          [alt]="'Photo ' + (idx + 2)"
+                          class="thumbnail"
+                          appNoDownload
+                          (error)="$any($event.target).src = '/placeholder.svg'"
+                        />
+                      </ng-container>
+                      <div *ngIf="product.photos.length > 4" class="thumbnail-more">+{{ product.photos.length - 4 }}</div>
+                    </div>
+                  </ng-container>
         </div>
 
         <div class="product-details-section">
-          <div class="product-header">
-            <div>
-              <h3 class="product-title">{{ product.title }}</h3>
-              @if (product.status === 'PENDING') {
-              <span class="badge badge-pending">
-                <lucide-icon [img]="Clock" [size]="14"></lucide-icon>
-                En attente
-              </span>
-              } @else if (product.status === 'APPROVED') {
-              <span class="badge badge-approved">
-                <lucide-icon [img]="CheckCircle" [size]="14"></lucide-icon>
-                Approuvé
-              </span>
-              }
-            </div>
+                <div class="product-header">
+                  <div>
+                    <h3 class="product-title">{{ product.title }}</h3>
+                    <ng-container *ngIf="product.status === 'PENDING'">
+                      <span class="badge badge-pending">
+                        <lucide-icon [img]="Clock" [size]="14"></lucide-icon>
+                        En attente
+                      </span>
+                    </ng-container>
+                    <ng-container *ngIf="product.status === 'APPROVED'">
+                      <span class="badge badge-approved">
+                        <lucide-icon [img]="CheckCircle" [size]="14"></lucide-icon>
+                        Approuvé
+                      </span>
+                    </ng-container>
+                  </div>
             <div class="product-meta">
               <span class="meta-item">
                 <lucide-icon [img]="Calendar" [size]="16" class="meta-icon"></lucide-icon>
@@ -200,126 +208,181 @@
                   {{ product.seller.email || 'N/A' }}
                 </a>
               </div>
-              @if (product.seller.phone) {
-              <div class="seller-item">
-                <span class="seller-label">Téléphone</span>
-                <a [href]="'tel:' + product.seller.phone" class="seller-link">
-                  {{ product.seller.phone }}
-                </a>
-              </div>
-              }
+                  <ng-container *ngIf="product.seller?.phone">
+                    <div class="seller-item">
+                      <span class="seller-label">Téléphone</span>
+                      <a [href]="'tel:' + product.seller.phone" class="seller-link">
+                        {{ product.seller.phone }}
+                      </a>
+                    </div>
+                  </ng-container>
             </div>
           </div>
 
           <div class="product-actions">
-            @if (product.status === 'PENDING') {
-            <button class="btn btn-success btn-action" (click)="approveProduct(product)">
-              <lucide-icon [img]="CheckCircle" [size]="18" class="action-icon"></lucide-icon>
-              <span>Approuver</span>
+                  <ng-container *ngIf="product.status === 'PENDING'">
+                    <button class="btn btn-success btn-action" (click)="approveProduct(product)">
+                      <lucide-icon [img]="CheckCircle" [size]="18" class="action-icon"></lucide-icon>
+                      <span>Approuver</span>
+                    </button>
+                    <button class="btn btn-danger btn-action" (click)="rejectProduct(product)">
+                      <lucide-icon [img]="XCircle" [size]="18" class="action-icon"></lucide-icon>
+                      <span>Rejeter</span>
+                    </button>
+                  </ng-container>
+                  <button class="btn btn-secondary btn-action" (click)="viewProduct(product)">
+                    <lucide-icon [img]="Eye" [size]="18" class="action-icon"></lucide-icon>
+                    <span>Détails</span>
+                  </button>
+                  <button class="btn btn-danger-outline btn-action" (click)="deleteProduct(product)">
+                    <lucide-icon [img]="Trash2" [size]="18" class="action-icon"></lucide-icon>
+                    <span>Supprimer</span>
+                  </button>
+          </div>
+        </div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <!-- Categories Management -->
+      <ng-container *ngIf="currentView() === 'categories'">
+        <div class="categories-management">
+          <div class="categories-header">
+            <h2>Gestion des catégories</h2>
+            <button class="btn btn-primary" (click)="openCategoryModal()" [disabled]="showCategoryModal()">
+              <lucide-icon [img]="Plus" [size]="18"></lucide-icon>
+              <span>Ajouter une catégorie</span>
             </button>
-            <button class="btn btn-danger btn-action" (click)="rejectProduct(product)">
-              <lucide-icon [img]="XCircle" [size]="18" class="action-icon"></lucide-icon>
-              <span>Rejeter</span>
+          </div>
+
+          <ng-container *ngIf="categories().length === 0; else categoriesList">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <lucide-icon [img]="Settings" [size]="64"></lucide-icon>
+              </div>
+              <h2>Aucune catégorie</h2>
+              <p>Créez votre première catégorie pour organiser les produits.</p>
+              <button class="btn btn-primary btn-large" (click)="openCategoryModal()" [disabled]="showCategoryModal()">
+                <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+                <span>Créer la première catégorie</span>
+              </button>
+            </div>
+          </ng-container>
+
+          <ng-template #categoriesList>
+            <div class="categories-list">
+              <ng-container *ngFor="let category of categories()">
+                <div class="category-list-item">
+                  <div class="category-info">
+                    <div class="category-icon" [style.background-color]="category.color || '#3b82f6'">
+                      <lucide-icon [img]="Package" [size]="20" color="white"></lucide-icon>
+                    </div>
+                    <div class="category-details">
+                      <h3 class="category-name">{{ category.name }}</h3>
+                      <p class="category-description">{{ category.description || 'Aucune description' }}</p>
+                      <span class="category-status" [class]="'status-' + (category.isActive ? 'active' : 'inactive')">
+                        {{ category.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="category-actions">
+                    <button class="btn btn-outline btn-sm" (click)="editCategory(category)" [disabled]="showCategoryModal()">
+                      <lucide-icon [img]="Settings" [size]="16"></lucide-icon>
+                      <span>Modifier</span>
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteCategory(category)" [disabled]="showCategoryModal()">
+                      <lucide-icon [img]="Trash2" [size]="16"></lucide-icon>
+                      <span>Supprimer</span>
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </ng-template>
+        </div>
+      </ng-container>
+    </ng-template>
+
+    <!-- Modal Product Details -->
+    <ng-container *ngIf="showModal() && selectedProduct() as product">
+      <div
+        class="modal-overlay"
+        (click)="closeModal()"
+        (keydown.escape)="closeModal()"
+        role="dialog"
+        aria-modal="true"
+        tabindex="-1"
+      >
+        <div
+          class="modal-content"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+          role="document"
+        >
+          <div class="modal-header">
+            <h2>{{ product.title }}</h2>
+            <button
+              class="modal-close"
+              (click)="closeModal()"
+              aria-label="Fermer la modal"
+              title="Fermer"
+            >
+              <lucide-icon [img]="X" [size]="24"></lucide-icon>
             </button>
-            }
-            <button class="btn btn-secondary btn-action" (click)="viewProduct(product)">
-              <lucide-icon [img]="Eye" [size]="18" class="action-icon"></lucide-icon>
-              <span>Détails</span>
+          </div>
+          <div class="modal-body">
+            <div class="modal-images">
+              <ng-container *ngFor="let photo of product.photos; let i = index">
+                <img
+                  [src]="photo.url"
+                  [alt]="'Photo ' + (i + 1)"
+                  class="modal-image"
+                  appNoDownload
+                  (error)="$any($event.target).src = '/placeholder.svg'"
+                />
+              </ng-container>
+            </div>
+            <div class="modal-info">
+              <h3>Description</h3>
+              <p>{{ product.description }}</p>
+
+              <h3>Vendeur</h3>
+              <p>
+                <strong>Nom:</strong> {{ product.seller.firstName || 'N/A' }}
+                {{ product.seller.lastName || '' }}
+              </p>
+              <p>
+                <strong>Email:</strong>
+                <a [href]="'mailto:' + (product.seller.email || '')">{{ product.seller.email || 'N/A' }}</a>
+              </p>
+              <ng-container *ngIf="product.seller.phone">
+                <p>
+                  <strong>Téléphone:</strong>
+                  <a [href]="'tel:' + product.seller.phone">{{ product.seller.phone }}</a>
+                </p>
+              </ng-container>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <ng-container *ngIf="product.status === 'PENDING'">
+              <button class="btn btn-success" (click)="approveProduct(product)">
+                <lucide-icon [img]="CheckCircle" [size]="18"></lucide-icon>
+                Approuver
+              </button>
+              <button class="btn btn-danger" (click)="rejectProduct(product)">
+                <lucide-icon [img]="XCircle" [size]="18"></lucide-icon>
+                Rejeter
+              </button>
+            </ng-container>
+            <button class="btn btn-danger-outline" (click)="deleteProduct(product)">
+              <lucide-icon [img]="Trash2" [size]="18"></lucide-icon>
+              Supprimer
             </button>
-            <button class="btn btn-danger-outline btn-action" (click)="deleteProduct(product)">
-              <lucide-icon [img]="Trash2" [size]="18" class="action-icon"></lucide-icon>
-              <span>Supprimer</span>
-            </button>
+            <button class="btn btn-secondary" (click)="closeModal()">Fermer</button>
           </div>
         </div>
       </div>
-      }
-    </div>
-    }
+    </ng-container>
   </div>
-
-  <!-- Modal Product Details -->
-  @if (showModal() && selectedProduct(); as product) {
-  <div
-    class="modal-overlay"
-    (click)="closeModal()"
-    (keydown.escape)="closeModal()"
-    role="dialog"
-    aria-modal="true"
-    tabindex="-1"
-  >
-    <div
-      class="modal-content"
-      (click)="$event.stopPropagation()"
-      (keydown)="$event.stopPropagation()"
-      role="document"
-    >
-      <div class="modal-header">
-        <h2>{{ product.title }}</h2>
-        <button
-          class="modal-close"
-          (click)="closeModal()"
-          aria-label="Fermer la modal"
-          title="Fermer"
-        >
-          <lucide-icon [img]="X" [size]="24"></lucide-icon>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-images">
-          @for (photo of product.photos; track photo.id) {
-          <img
-            [src]="photo.url"
-            [alt]="'Photo ' + ($index + 1)"
-            class="modal-image"
-            appNoDownload
-            (error)="$any($event.target).src = '/placeholder.svg'"
-          />
-          }
-        </div>
-        <div class="modal-info">
-          <h3>Description</h3>
-          <p>{{ product.description }}</p>
-
-          <h3>Vendeur</h3>
-          <p>
-            <strong>Nom:</strong> {{ selectedProduct()?.seller?.firstName || 'N/A' }}
-            {{ selectedProduct()?.seller?.lastName || '' }}
-          </p>
-          <p>
-            <strong>Email:</strong>
-            <a [href]="'mailto:' + (selectedProduct()?.seller?.email || '')">{{
-              selectedProduct()?.seller?.email || 'N/A'
-            }}</a>
-          </p>
-          @if (selectedProduct()?.seller?.phone) {
-          <p>
-            <strong>Téléphone:</strong>
-            <a [href]="'tel:' + selectedProduct()?.seller?.phone">{{
-              selectedProduct()?.seller?.phone
-            }}</a>
-          </p>
-          }
-        </div>
-      </div>
-      <div class="modal-footer">
-        @if (product.status === 'PENDING') {
-        <button class="btn btn-success" (click)="approveProduct(product)">
-          <lucide-icon [img]="CheckCircle" [size]="18"></lucide-icon>
-          Approuver
-        </button>
-        <button class="btn btn-danger" (click)="rejectProduct(product)">
-          <lucide-icon [img]="XCircle" [size]="18"></lucide-icon>
-          Rejeter
-        </button>
-        }
-        <button class="btn btn-danger-outline" (click)="deleteProduct(product)">
-          <lucide-icon [img]="Trash2" [size]="18"></lucide-icon>
-          Supprimer
-        </button>
-        <button class="btn btn-secondary" (click)="closeModal()">Fermer</button>
-      </div>
-    </div>
-  </div>
-  }
-</div>

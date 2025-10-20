@@ -57,11 +57,64 @@ async function main() {
 
   console.log('✅ Seller user created successfully:', seller.email);
 
+  // Créer quelques catégories de test
+  const categories = await Promise.all([
+    prisma.category.create({
+      data: {
+        name: 'Téléphones',
+        description: 'Smartphones et mobiles',
+        icon: 'Smartphone',
+        color: '#3b82f6',
+        isActive: true
+      }
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Ordinateurs',
+        description: 'Ordinateurs portables et fixes',
+        icon: 'Monitor',
+        color: '#10b981',
+        isActive: true
+      }
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Électronique',
+        description: 'Appareils électroniques divers',
+        icon: 'Zap',
+        color: '#f59e0b',
+        isActive: true
+      }
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Vêtements',
+        description: 'Vêtements et accessoires',
+        icon: 'Shirt',
+        color: '#ef4444',
+        isActive: true
+      }
+    }),
+    prisma.category.create({
+      data: {
+        name: 'Maison & Jardin',
+        description: 'Articles pour la maison et le jardin',
+        icon: 'Home',
+        color: '#8b5cf6',
+        isActive: true
+      }
+    })
+  ]);
+
+  console.log('✅ Categories created successfully');
+
   // Créer quelques produits de test pour le vendeur
   const product1 = await prisma.product.create({
     data: {
       title: 'iPhone 12 Pro 128GB',
       description: 'Excellent état, comme neuf. Vendu avec boîte et accessoires.',
+      price: 599.99,
+      categoryId: categories[0].id, // Téléphones
       sellerId: seller.id,
       status: 'PENDING',
       photos: {
@@ -77,6 +130,8 @@ async function main() {
     data: {
       title: 'MacBook Pro M1 13"',
       description: 'Ordinateur portable Apple en parfait état. Idéal pour le travail et les études.',
+      price: 1299.99,
+      categoryId: categories[1].id, // Ordinateurs
       sellerId: seller.id,
       status: 'APPROVED',
       publishedAt: new Date(),
@@ -93,6 +148,8 @@ async function main() {
     data: {
       title: 'Samsung Galaxy S21',
       description: 'Smartphone Samsung en très bon état. Batterie 95%.',
+      price: 349.99,
+      categoryId: categories[0].id, // Téléphones
       sellerId: seller.id,
       status: 'REJECTED',
       photos: {

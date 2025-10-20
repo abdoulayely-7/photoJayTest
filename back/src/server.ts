@@ -9,6 +9,7 @@ import productRoutes from './routes/product.routes';
 import notificationRoutes from './routes/notification.routes';
 import userRoutes from './routes/user.routes';
 import sellerRoutes from './routes/seller.routes';
+import categoryRoutes from './routes/category.routes';
 import { CronService } from './utils/cron.util';
 
 dotenv.config();
@@ -69,6 +70,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
 

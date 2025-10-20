@@ -41,6 +41,25 @@ enum UserRole {
   ADMIN
 }
 
+// ==================== CATÉGORIES ====================
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?  @db.Text
+  icon        String?  // Nom de l'icône Lucide
+  color       String?  // Couleur hexadécimale
+  isActive    Boolean  @default(true) @map("is_active")
+
+  products Product[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@map("categories")
+}
+
 // ==================== PRODUITS ====================
 // Les vendeurs publient sans compte, on stocke leurs infos directement
 
@@ -48,12 +67,16 @@ model Product {
   id          String        @id @default(uuid())
   title       String
   description String        @db.Text
+  price       Float         // Prix en euros
   status      ProductStatus @default(PENDING)
   views       Int           @default(0)
   isVip       Boolean       @default(false) @map("is_vip")
 
   sellerId String @map("seller_id")
   seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  categoryId String   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
 
   photos Photo[]
 
@@ -65,6 +88,7 @@ model Product {
   @@index([isVip])
   @@index([publishedAt])
   @@index([sellerId])
+  @@index([categoryId])
   @@map("products")
 }
 

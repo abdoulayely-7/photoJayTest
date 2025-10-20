@@ -9,6 +9,8 @@ export class ProductService {
   async createProduct(data: {
     title: string;
     description: string;
+    price: number;
+    categoryId: string;
     sellerId: string;
     photos: { url: string; publicId: string }[];
   }) {
@@ -25,6 +27,8 @@ export class ProductService {
       data: {
         title: data.title,
         description: data.description,
+        price: data.price,
+        categoryId: data.categoryId,
         sellerId: data.sellerId,
         isVip: seller.isVip,
         photos: {

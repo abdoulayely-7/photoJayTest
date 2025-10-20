@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Product, PaginatedResponse, LoginResponse, User } from '../models/product.model';
+import { Product, PaginatedResponse, LoginResponse, User, Category } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -123,6 +123,30 @@ export class ApiService {
 
   getSellerProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/products/seller`, {
+      headers: this.getHeaders(true)
+    });
+  }
+
+  // ==================== CATÉGORIES ====================
+
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.apiUrl}/categories`);
+  }
+
+  createCategory(category: { name: string; description?: string; icon?: string; color?: string }): Observable<Category> {
+    return this.http.post<Category>(`${this.apiUrl}/categories`, category, {
+      headers: this.getHeaders(true)
+    });
+  }
+
+  updateCategory(id: string, category: { name?: string; description?: string; icon?: string; color?: string; isActive?: boolean }): Observable<Category> {
+    return this.http.put<Category>(`${this.apiUrl}/categories/${id}`, category, {
+      headers: this.getHeaders(true)
+    });
+  }
+
+  deleteCategory(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/categories/${id}`, {
       headers: this.getHeaders(true)
     });
   }

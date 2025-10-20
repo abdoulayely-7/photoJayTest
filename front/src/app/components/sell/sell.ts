@@ -16,39 +16,8 @@ import { ToastService } from '../../services/toast.service';
 import Swal from 'sweetalert2';
 import { LucideAngularModule, Camera, X, AlertCircle, CheckCircle, User, LogIn, Home, LogOut, Menu, Palette, LayoutDashboard, Package, Plus, Edit, Trash2, Calendar, Eye, Save, Image, Type, FileText, RotateCcw, Clock, Settings, Lock } from 'lucide-angular';
 import { z } from 'zod';
-import { Product, ProductStatus } from '../../models/product.model';
-
-const productSchema = z.object({
-  title: z
-    .string()
-    .min(3, 'Le titre doit contenir au moins 3 caractères')
-    .max(100, 'Le titre ne peut pas dépasser 100 caractères'),
-  description: z
-    .string()
-    .min(10, 'La description doit contenir au moins 10 caractères')
-    .max(1000, 'La description ne peut pas dépasser 1000 caractères'),
-  photos: z
-    .array(z.any())
-    .min(1, 'Au moins une photo est requise')
-    .max(5, 'Maximum 5 photos autorisées'),
-  sellerFirstName: z
-    .string()
-    .min(1, 'Le prénom du vendeur est requis')
-    .max(50, 'Le prénom ne peut pas dépasser 50 caractères'),
-  sellerLastName: z
-    .string()
-    .min(1, 'Le nom du vendeur est requis')
-    .max(50, 'Le nom ne peut pas dépasser 50 caractères'),
-  sellerEmail: z
-    .string()
-    .min(1, 'L\'email du vendeur est requis')
-    .email('Format d\'email invalide')
-    .max(255, 'L\'email ne peut pas dépasser 255 caractères'),
-  sellerPhone: z
-    .string()
-    .max(20, 'Le téléphone ne peut pas dépasser 20 caractères')
-    .optional(),
-});
+import { Product, ProductStatus, Category } from '../../models/product.model';
+import { productSchema } from '../../schemas/login.schema';
 
 @Component({
   selector: 'app-sell',
@@ -100,6 +69,10 @@ export class SellComponent implements OnInit, OnDestroy {
 
   title = signal<string>('');
   description = signal<string>('');
+  price = signal<number>(0);
+  selectedCategoryId = signal<string>('');
+
+  categories = signal<Category[]>([]);
 
   // Informations vendeur (éditables)
   sellerFirstName = signal<string>('');
@@ -135,7 +108,8 @@ export class SellComponent implements OnInit, OnDestroy {
             this.sellerEmail.set(userData.email || '');
             this.sellerPhone.set('');
 
-            // Charger les produits du vendeur
+            // Charger les catégories et les produits du vendeur
+            this.loadCategories();
             this.loadSellerProducts();
           },
           error: () => {
@@ -167,6 +141,18 @@ export class SellComponent implements OnInit, OnDestroy {
 
   closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
+  }
+
+  loadCategories(): void {
+    this.apiService.getCategories().subscribe({
+      next: (categories: Category[]) => {
+        this.categories.set(categories);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors du chargement des catégories:', error);
+        this.toastService.error('Erreur lors du chargement des catégories');
+      }
+    });
   }
 
   loadSellerProducts(): void {
@@ -241,6 +227,8 @@ export class SellComponent implements OnInit, OnDestroy {
   resetForm(): void {
     this.title.set('');
     this.description.set('');
+    this.price.set(0);
+    this.selectedCategoryId.set('');
     this.photos.set([]);
     this.photoPreviewUrls.set([]);
     this.toastService.info('Formulaire réinitialisé');
@@ -366,6 +354,8 @@ export class SellComponent implements OnInit, OnDestroy {
     const validationResult = productSchema.safeParse({
       title: this.title(),
       description: this.description(),
+      price: this.price(),
+      categoryId: this.selectedCategoryId(),
       photos: this.photos(),
       sellerFirstName: this.sellerFirstName(),
       sellerLastName: this.sellerLastName(),
@@ -391,6 +381,8 @@ export class SellComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('title', this.title());
     formData.append('description', this.description());
+    formData.append('price', this.price().toString());
+    formData.append('categoryId', this.selectedCategoryId());
 
     // Ajouter les informations vendeur
     formData.append('sellerFirstName', this.sellerFirstName());
@@ -411,7 +403,7 @@ export class SellComponent implements OnInit, OnDestroy {
         // Basculer vers le dashboard pour voir le nouveau produit
         this.setView('dashboard');
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erreur:', error);
         this.toastService.error(
           'Erreur lors de la publication: ' + (error.error?.error || error.message)

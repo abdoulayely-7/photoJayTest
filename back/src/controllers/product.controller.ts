@@ -12,14 +12,14 @@ export class ProductController {
       console.log('Files:', req.files);
       console.log('User:', (req as any).user);
 
-      const { title, description } = req.body;
+      const { title, description, price, categoryId } = req.body;
       const userId = (req as any).user?.id;
 
-      console.log('Extracted data:', { title, description, userId });
+      console.log('Extracted data:', { title, description, price, categoryId, userId });
 
       // Validation
-      if (!title || !description) {
-        return res.status(400).json({ error: 'Title and description are required' });
+      if (!title || !description || !price || !categoryId) {
+        return res.status(400).json({ error: 'Title, description, price and category are required' });
       }
 
       if (!userId) {
@@ -42,6 +42,8 @@ export class ProductController {
       const product = await productService.createProduct({
         title,
         description,
+        price: parseFloat(price),
+        categoryId,
         sellerId: userId,
         photos: uploadedPhotos,
       });

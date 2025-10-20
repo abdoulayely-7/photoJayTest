@@ -20,10 +20,22 @@ export interface Photo {
   createdAt: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Product {
   id: string;
   title: string;
   description: string;
+  price: number;
   status: ProductStatus;
   views: number;
   isVip: boolean;
@@ -36,6 +48,8 @@ export interface Product {
     phone?: string;
     isVip: boolean;
   };
+  categoryId: string;
+  category: Category;
   photos: Photo[];
   publishedAt?: string;
   createdAt: string;
