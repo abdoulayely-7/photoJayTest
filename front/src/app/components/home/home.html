@@ -28,26 +28,26 @@
   </div>
 
   @if (mobileMenuOpen()) {
-    <div class="mobile-menu">
-      <div class="mobile-menu-content">
-        <a routerLink="/seller-auth" class="mobile-menu-link" (click)="closeMobileMenu()">
-          <lucide-icon [img]="User" [size]="20"></lucide-icon>
-          Espace Vendeur
-        </a>
-        <a routerLink="/sell" class="mobile-cta-btn" (click)="closeMobileMenu()">
-          <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
-          Vendre un produit
-        </a>
-        <a routerLink="/login" class="mobile-menu-link" (click)="closeMobileMenu()">
-          <lucide-icon [img]="Shield" [size]="20"></lucide-icon>
-          Administration
-        </a>
-        <div class="mobile-theme-selector" (click)="openThemeSelector(); closeMobileMenu()">
-          <lucide-icon [img]="Palette" [size]="20"></lucide-icon>
-          Changer le thème
-        </div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-content">
+      <a routerLink="/seller-auth" class="mobile-menu-link" (click)="closeMobileMenu()">
+        <lucide-icon [img]="User" [size]="20"></lucide-icon>
+        Espace Vendeur
+      </a>
+      <a routerLink="/sell" class="mobile-cta-btn" (click)="closeMobileMenu()">
+        <lucide-icon [img]="Plus" [size]="20"></lucide-icon>
+        Vendre un produit
+      </a>
+      <a routerLink="/login" class="mobile-menu-link" (click)="closeMobileMenu()">
+        <lucide-icon [img]="Shield" [size]="20"></lucide-icon>
+        Administration
+      </a>
+      <div class="mobile-theme-selector" (click)="openThemeSelector(); closeMobileMenu()">
+        <lucide-icon [img]="Palette" [size]="20"></lucide-icon>
+        Changer le thème
       </div>
     </div>
+  </div>
   }
 </header>
 
@@ -97,14 +97,8 @@
       <form (ngSubmit)="onSearch()" class="search-form">
         <div class="search-input-group">
           <lucide-icon [img]="Search" [size]="20" class="search-icon"></lucide-icon>
-          <input
-            type="text"
-            [value]="searchTerm()"
-            (input)="searchTerm.set($any($event.target).value)"
-            name="search"
-            class="search-input"
-            placeholder="Rechercher un produit, une marque..."
-          />
+          <input type="text" [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)" name="search"
+            class="search-input" placeholder="Rechercher un produit, une marque..." />
         </div>
         <button type="submit" class="search-btn">
           <lucide-icon [img]="Search" [size]="18"></lucide-icon>
@@ -128,99 +122,94 @@
 
     <!-- Loading State -->
     @if (loading()) {
-      <div class="loading-state">
-        <div class="loading-spinner">
-          <div class="spinner"></div>
-        </div>
-        <p class="loading-text">Chargement des produits...</p>
+    <div class="loading-state">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
       </div>
+      <p class="loading-text">Chargement des produits...</p>
+    </div>
     }
 
     <!-- Empty State -->
     @else if (products().length === 0) {
-      <div class="empty-state">
-        <div class="empty-content">
-          <lucide-icon [img]="Package" [size]="64" class="empty-icon"></lucide-icon>
-          <h3 class="empty-title">Aucun produit trouvé</h3>
-          <p class="empty-description">
-            Aucun produit ne correspond à votre recherche.
-            Essayez de modifier vos critères.
-          </p>
-          <button class="btn btn-primary" (click)="resetSearch()">
-            <lucide-icon [img]="RotateCcw" [size]="16"></lucide-icon>
-            <span>Voir tous les produits</span>
-          </button>
-        </div>
+    <div class="empty-state">
+      <div class="empty-content">
+        <lucide-icon [img]="Package" [size]="64" class="empty-icon"></lucide-icon>
+        <h3 class="empty-title">Aucun produit trouvé</h3>
+        <p class="empty-description">
+          Aucun produit ne correspond à votre recherche.
+          Essayez de modifier vos critères.
+        </p>
+        <button class="btn btn-primary" (click)="resetSearch()">
+          <lucide-icon [img]="RotateCcw" [size]="16"></lucide-icon>
+          <span>Voir tous les produits</span>
+        </button>
       </div>
+    </div>
     }
 
     <!-- Products Grid -->
     @else {
-      <div class="products-grid">
-        @for (product of products(); track product.id) {
-          <div class="product-card" (click)="viewProduct(product, $event)">
-            <div class="product-image-container">
-              <img
-                [src]="getPrimaryPhoto(product)"
-                [alt]="product.title"
-                class="product-image"
-                appNoDownload
-                (error)="$any($event.target).src = '/placeholder.svg'"
-              />
-              @if (product.isVip) {
-                <div class="vip-badge">
-                  <lucide-icon [img]="Star" [size]="14"></lucide-icon>
-                  <span>VIP</span>
-                </div>
-              }
+    <div class="products-grid">
+      @for (product of products(); track product.id) {
+      <div class="product-card" (click)="viewProduct(product, $event)">
+        <div class="product-image-container">
+          <img [src]="getPrimaryPhoto(product)" [alt]="product.title" class="product-image" appNoDownload
+            (error)="$any($event.target).src = '/placeholder.svg'" />
+          @if (product.isVip) {
+          <div class="vip-badge">
+            <lucide-icon [img]="Star" [size]="14"></lucide-icon>
+            <span>VIP</span>
+          </div>
+          }
+        </div>
+
+        <div class="product-content">
+          <div class="product-header">
+            <h3 class="product-title">{{ product.title }}</h3>
+            <div class="product-stats">
+              <span class="stat-item">
+                <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
+                {{ product.views }}
+              </span>
             </div>
+          </div>
 
-            <div class="product-content">
-              <div class="product-header">
-                <h3 class="product-title">{{ product.title }}</h3>
-                <div class="product-stats">
-                  <span class="stat-item">
-                    <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
-                    {{ product.views }}
-                  </span>
-                </div>
-              </div>
+          <p class="product-description">{{ product.description | slice:0:100 }}...</p>
 
-              <p class="product-description">{{ product.description | slice:0:100 }}...</p>
-
-              <div class="product-seller-info">
-                <div class="seller-avatar">
-                  <lucide-icon [img]="User" [size]="16"></lucide-icon>
-                </div>
-                <div class="seller-details">
-                  <span class="seller-name">
-                    {{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}
-                  </span>
-                  <div class="seller-contact">
-                    @if (product.seller.email) {
-                      <a [href]="'mailto:' + product.seller.email" class="contact-btn">
-                        <lucide-icon [img]="Mail" [size]="14"></lucide-icon>
-                      </a>
-                    }
-                    @if (product.seller.phone) {
-                      <a [href]="'tel:' + product.seller.phone" class="contact-btn">
-                        <lucide-icon [img]="Phone" [size]="14"></lucide-icon>
-                      </a>
-                    }
-                  </div>
-                </div>
-              </div>
-
-              <div class="product-actions">
-                <button class="btn btn-primary btn-sm" (click)="viewProduct(product, $event)">
-                  <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
-                  <span>Voir détails</span>
-                </button>
+          <div class="product-seller-info">
+            <div class="seller-avatar">
+              <lucide-icon [img]="User" [size]="16"></lucide-icon>
+            </div>
+            <div class="seller-details">
+              <span class="seller-name">
+                {{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}
+              </span>
+              <div class="seller-contact">
+                @if (product.seller.email) {
+                <a [href]="'mailto:' + product.seller.email" class="contact-btn">
+                  <lucide-icon [img]="Mail" [size]="14"></lucide-icon>
+                </a>
+                }
+                @if (product.seller.phone) {
+                <a [href]="'tel:' + product.seller.phone" class="contact-btn">
+                  <lucide-icon [img]="Phone" [size]="14"></lucide-icon>
+                </a>
+                }
               </div>
             </div>
           </div>
-        }
+
+          <div class="product-actions">
+            <button class="btn btn-primary btn-sm" (click)="viewProduct(product, $event)">
+              <lucide-icon [img]="Eye" [size]="14"></lucide-icon>
+              <span>Voir détails</span>
+            </button>
+          </div>
+        </div>
       </div>
+      }
+    </div>
     }
   </div>
 </section>
@@ -257,27 +246,67 @@
       <!-- Images Gallery -->
       <div class="modal-gallery">
         @for (photo of product.photos; track photo.id) {
-        <img
-          [src]="photo.url"
-          [alt]="'Photo ' + ($index + 1)"
-          [title]="'Photo ' + ($index + 1) + ' de ' + product.title"
-          class="modal-gallery-image"
-          appNoDownload
-          (error)="$any($event.target).src = '/placeholder.svg'"
-        />
+        <img [src]="photo.url" [alt]="'Photo ' + ($index + 1)"
+          [title]="'Photo ' + ($index + 1) + ' de ' + product.title" class="modal-gallery-image" appNoDownload
+          (error)="$any($event.target).src = '/placeholder.svg'" />
         }
       </div>
 
       <!-- Product Details -->
       <div class="modal-details">
+        <!-- Product Information -->
+        <div class="modal-section">
+          <h3 class="modal-section-title">
+            <lucide-icon [img]="Package" [size]="20"></lucide-icon>
+            Informations du produit
+          </h3>
+          <div class="product-info-grid">
+            <div class="info-item">
+              <span class="info-label">Prix:</span>
+              <span class="info-value price">{{ product.price || 'N/A' }} €</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Catégorie:</span>
+              <span class="info-value">{{ product.category?.name || 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Statut:</span>
+              <span class="info-value status" [class]="'status-' + (product.status?.toLowerCase() || 'unknown')">
+                {{ product.status === 'APPROVED' ? 'Approuvé' : product.status === 'PENDING' ? 'En attente' :
+                product.status === 'REJECTED' ? 'Rejeté' : product.status === 'EXPIRED' ? 'Expiré' : (product.status ||
+                'Inconnu') }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Publié le:</span>
+              <span class="info-value">{{ formatDate(product.publishedAt || product.createdAt) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Nombre de vues:</span>
+              <span class="info-value">{{ product.views || 0 }}</span>
+            </div>
+            @if (product.isVip) {
+            <div class="info-item">
+              <span class="info-label">Type:</span>
+              <span class="info-value vip-badge">
+                <lucide-icon [img]="Star" [size]="14"></lucide-icon>
+                Produit VIP
+              </span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Description -->
         <div class="modal-section">
           <h3 class="modal-section-title">
             <lucide-icon [img]="FileText" [size]="20"></lucide-icon>
             Description
           </h3>
-          <p class="modal-description">{{ product.description }}</p>
+          <p class="modal-description">{{ product.description || 'Aucune description disponible.' }}</p>
         </div>
 
+        <!-- Seller Information -->
         <div class="modal-section">
           <h3 class="modal-section-title">
             <lucide-icon [img]="User" [size]="20"></lucide-icon>
@@ -288,7 +317,15 @@
               <lucide-icon [img]="User" [size]="32"></lucide-icon>
             </div>
             <div class="seller-details-large">
-              <h4 class="seller-name-large">{{ product.seller.firstName || 'N/A' }} {{ product.seller.lastName || '' }}</h4>
+              <h4 class="seller-name-large">
+                {{ (product.seller?.firstName || 'Vendeur') + ' ' + (product.seller?.lastName || '') }}
+              </h4>
+              @if (product.seller?.isVip) {
+              <span class="seller-vip-badge">
+                <lucide-icon [img]="Star" [size]="14"></lucide-icon>
+                VIP
+              </span>
+              }
               <div class="seller-contact-large">
                 @if (product.seller.email) {
                 <a [href]="'mailto:' + product.seller.email" class="contact-btn-large">
@@ -300,6 +337,13 @@
                 <a [href]="'tel:' + product.seller.phone" class="contact-btn-large">
                   <lucide-icon [img]="Phone" [size]="18"></lucide-icon>
                   <span>{{ product.seller.phone }}</span>
+                </a>
+                }
+                @if (product.seller.phone) {
+                <a [href]="'https://api.whatsapp.com/send/?phone=' + product.seller.phone + '&text=Salut ' + (product.seller.firstName || 'Vendeur') + ', je suis intéressé par votre produit: ' + product.title"
+                  target="_blank" class="contact-btn-large whatsapp-btn">
+                  <lucide-icon [img]="Phone" [size]="18"></lucide-icon>
+                  <span>Contacter via WhatsApp</span>
                 </a>
                 }
               </div>

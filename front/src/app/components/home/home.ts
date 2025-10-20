@@ -52,7 +52,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Plus besoin du themeSelectorComponent car on utilise directement le composant dans la navbar
+    // Lifecycle method required by AfterViewInit interface
   }
 
   loadProducts(): void {
@@ -118,5 +118,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.searchTerm.set('');
     this.currentPage.set(1);
     this.loadProducts();
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
   }
 }
